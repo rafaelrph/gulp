@@ -5,7 +5,11 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     htmlReplace = require('gulp-html-replace'),
     uglify = require('gulp-uglify'),
-    cssmin = require('gulp-cssmin');
+    cssmin = require('gulp-cssmin'),
+    browserSync = require('browser-sync'),
+    jsHint = require('gulp-jshint'),
+    jsHintStylish = require('jshint-stylish'),
+    cssLint = require('gulp-csslint');
 
 gulp.task('default', ['copy'], function() {
     gulp.start('build-img', 'build-all');
@@ -33,4 +37,26 @@ gulp.task('build-all', function() {
             'js': [uglify],
             'css': [cssmin]
         })).pipe(gulp.dest('dist'));
+});
+
+gulp.task('server', function() {
+    browserSync.init({
+        server: {
+            baseDir: 'src'
+        }
+    });
+    
+    gulp.watch('src/js/*.js').on('change', function(event) {
+        gulp.src(event.path)
+            .pipe(jsHint())
+            .pipe(jsHint.reporter(jsHintStylish));
+    });
+
+    gulp.watch('src/css/*.css').on('change', function(event) {
+        gulp.src(event.path)
+            .pipe(cssLint())
+            .pipe(cssLint.formatter());
+    });
+
+    gulp.watch('src/**/*').on('change', browserSync.reload);
 });
