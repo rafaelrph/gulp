@@ -9,7 +9,8 @@ var gulp = require('gulp'),
     browserSync = require('browser-sync'),
     jsHint = require('gulp-jshint'),
     jsHintStylish = require('jshint-stylish'),
-    cssLint = require('gulp-csslint');
+    cssLint = require('gulp-csslint'),
+    prefixer = require('gulp-autoprefixer');
 
 gulp.task('default', ['copy'], function() {
     gulp.start('build-img', 'build-all');
@@ -35,7 +36,7 @@ gulp.task('build-all', function() {
     gulp.src('dist/**/*.html')
         .pipe(usemin({
             'js': [uglify],
-            'css': [cssmin]
+            'css': [prefixer, cssmin]
         })).pipe(gulp.dest('dist'));
 });
 
